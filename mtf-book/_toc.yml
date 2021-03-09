@@ -1,0 +1,20 @@
+# Table of content
+# Learn more at https://jupyterbook.org/customize/toc.html
+#
+- file: intro
+
+- part: ABOUT
+  chapters:
+  - file: about/intro_hedera
+  - file: about/mtf
+
+- part: RWANDA
+  chapters:
+  - file: electricity/dummy
+  - file: electricity/dummy
+
+- part: NEPAL
+  chapters:
+  - file: cooking/dummy
+  - file: cooking/dummy
+
