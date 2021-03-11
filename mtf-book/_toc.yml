@@ -10,8 +10,11 @@
 
 - part: RWANDA
   chapters:
-  - file: electricity/dummy
-  - file: electricity/dummy
+  - file: rwanda
+  - file: electricity/general
+  - file: electricity/mtf
+  - file: cooking/general
+  - file: cooking/mtf
 
 - part: NEPAL
   chapters:
