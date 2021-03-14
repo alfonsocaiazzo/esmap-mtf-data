@@ -59,11 +59,25 @@ YELLOW_COLORS = [
         "#D4AC0D", 
         "#D4AC0D"]
     
+COLOR_SCHEME = [
+    "#73C6B6",
+    "#1F618D",
+    "#B00C48",
+    "#F1C40F",
+    "#28D328",
+    "#F7DC6F",
+    "#1B4F72",
+    "#e36383",
+    "#F7DC6F",
+    "#78281F"
+]
 
 VARIATION = [
-        
+        "#EBF5FB",
         "#78281F",
+        "#F7DC6F",
         "#B03A2E",
+        "#FDEDEC",
         "#E74C3C",
         "#e36383",
         "#FDEDEC",
@@ -416,7 +430,7 @@ def get_multiple_choice_values(df,questions):
 
 
             
-def plot_bars(x_labels,bars_data,length=12,height=8,add_autolabel=True,percent=True):
+def plot_bars(x_labels,bars_data,length=12,height=8,add_autolabel=True,percent=True,title=None):
     fig,ax = plt.subplots(figsize=(length,height))
     
     x = np.arange(len(x_labels))  # the label locations
@@ -455,6 +469,8 @@ def plot_bars(x_labels,bars_data,length=12,height=8,add_autolabel=True,percent=T
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
     ax.legend()
+    if not(title==None):
+        plt.title(title)
     plt.show()
     
     
@@ -463,3 +479,68 @@ def simple_bar_plot(index,label,percent,title):
     pie_ = pd.DataFrame({label: percent},
                   index = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(index, percent)])
     pie_.plot.bar(y = label, figsize=(10, 10), title = title)
+
+
+# create a dictionary with:
+# keys: posssible answers to *question*, represnted by *names*
+# values: total number and the percentages
+def analyze_by_question(df,question,labels,names):
+    output = dict()
+    values = []
+    for k in range(0,len(labels)):
+        values.append(len(df[df[question] == labels[k]]))
+    
+    tot = sum(values)
+    for k in range(0,len(labels)):
+        l = names[k]
+        output[l]= {
+            "total": values[k],
+            "percent": 100*values[k]/tot
+        }
+    
+    return output
+
+
+def plot_tier_distribution(df,question,values,labels,title=None):
+    
+    national=analyze_by_question(df,question,values,labels)
+    urban=analyze_by_question(df.loc[df["habitat"]=="urban"],question,values,labels)
+    rural=analyze_by_question(df.loc[df["habitat"]=="rural"],question,values,labels)
+
+    # grouped bar chart
+    national_values = [national[k]["percent"] for k in national.keys()]
+    urban_values = [urban[k]["percent"] for k in urban.keys()]
+    rural_values = [rural[k]["percent"] for k in rural.keys()]
+
+    x = np.arange(len(labels))  # the label locations
+    width = 0.25  # the width of the bars
+
+
+    fig,ax = plt.subplots(figsize=(28,18))
+    rects1 = ax.bar(x - width, national_values, width, label='Total Sample')
+    rects2 = ax.bar(x, urban_values, width, label='Urban Households')
+    rects3 = ax.bar(x + width, rural_values, width, label='Rural Households')
+
+
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}%'.format(round(height,1)),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+    autolabel(rects1)
+    autolabel(rects2)
+    autolabel(rects3)
+
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+    if not(title==None):
+        plt.title(title)
+    fig.tight_layout()
+    plt.show()
