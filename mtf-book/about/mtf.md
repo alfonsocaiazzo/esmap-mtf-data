@@ -1,7 +1,5 @@
-Measuring Energy Access: the Multi-Tier Framework
+# The MTF for measuring energy access
 =======================
-
-## The importance of measuring energy access
 
 The concept and measurement of access to energy are of utmost importance to governments and development agencies in order to develop and adapt appropriate policies and programs to achieve global objectives. The Sustainable Energy for All initiative (SE4All) launched by the Secretary General of the United Nations in 2011 aims to achieve universal access to modern energy services by 2030. The [Sustainable Development Goal (SDG) number 7](https://sustainabledevelopment.un.org/sdg7), adopted in 2015 by all nations, aims to ensure access to affordable, safe, sustainable and modern energy for all by 2030. Worldwide, it is estimated that more than two billion people lack access to modern energy.
 
@@ -32,7 +30,7 @@ Access to electricity is measured based on standards (attributes) with multiple 
 
 Each attribute is evaluated separately, and the general level for household access to electricity is calculated by applying the lowest level obtained in any of the attributes. That is, the attribute with the lowest rating determines the overall household access to electricity supply level (tier).
 
-<img src="./images/MTF-electricitysupply.png" alt="image" style="width:80.0%" />
+<img src="../images/MTF_electricity.png" alt="image" style="width:80.0%" />
 
 ### Ranking matrix to evaluate  access to energy services
 
