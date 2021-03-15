@@ -18,7 +18,7 @@ figure_name: if provided, figure is saved to file
 title: if True, a title is added to the figure (data["title"])
 '''
 
- 
+
 BLUE_COLORS = [
         "#EBF5FB",
         "#D6EAF8",
@@ -39,7 +39,7 @@ RED_COLORS = [
         "#E74C3C",
         "#B03A2E",
         "#78281F"]
-        
+
 RED_COLORS_rev = [
         
         "#B03A2E",
@@ -58,7 +58,7 @@ YELLOW_COLORS = [
         "#F1C40F", 
         "#D4AC0D", 
         "#D4AC0D"]
-    
+
 
 VARIATION = [
         
@@ -125,7 +125,7 @@ def get_bar_chart_data(df,x,xname,y,yname):
         'bars_data': bars_data,
         'bars_labels': y
     }
-    
+
 
 
 
@@ -184,7 +184,7 @@ def bar_chart(data,color_scheme,barWidth=1,figure_name=None,title=False,yLabel=N
         plt.savefig(figure_name,bbox_inches='tight')
         #print("** saving " + figure_name)
     plt.show()
-    
+
 
 '''
 Draw a stacked bar chart from several datasets. The data to be plotted
@@ -356,7 +356,7 @@ def grouped_bar_chart(data,color_scheme,barWidth=1,figure_name=None,annotate=Fal
         figL.canvas.draw()
         bbox  = legend.get_window_extent().transformed(figL.dpi_scale_trans.inverted())
         figL.savefig(filename_legend, dpi="figure", bbox_inches=bbox)
-        
+
     
 
 def heatmap_matrix(df,x,y,annotations=True,colorbar=True,percent=False,
@@ -397,7 +397,7 @@ def heatmap_matrix(df,x,y,annotations=True,colorbar=True,percent=False,
     if not(figure_name==None):
         plt.savefig(figure_name,bbox_inches='tight')
     plt.show()
-       
+
 
 # Functions that we need over the code
 
@@ -415,7 +415,6 @@ def get_multiple_choice_values(df,questions):
     }
 
 
-            
 def plot_bars(x_labels,bars_data,length=12,height=8,add_autolabel=True,percent=True):
     fig,ax = plt.subplots(figsize=(length,height))
     
@@ -456,8 +455,8 @@ def plot_bars(x_labels,bars_data,length=12,height=8,add_autolabel=True,percent=T
     ax.set_xticklabels(x_labels)
     ax.legend()
     plt.show()
-    
-    
+
+
 def simple_bar_plot(index,label,percent,title):
     
     pie_ = pd.DataFrame({label: percent},
