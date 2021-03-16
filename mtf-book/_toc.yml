@@ -3,21 +3,20 @@
 #
 - file: intro
 
-- part: ABOUT
+- part: THE MULTI-TIER FRAMEWORK
   chapters:
-  - file: about/intro_hedera
   - file: about/mtf
 
 - part: RWANDA
   chapters:
-  - file: intro_Rwanda
-  - file: info_database
-  - file: electricity/rwanda
-  - file: cooking/rwanda
+  - file: rwanda/intro
+  - file: rwanda/info_electricity
+  - file: rwanda/mtf_electricity
+  
 
 
 - part: NEPAL
   chapters:
-  - file: cooking/dummy
-  - file: cooking/dummy
+  - file: dummy
+  - file: dummy
 
