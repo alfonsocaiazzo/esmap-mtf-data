@@ -18,7 +18,30 @@ figure_name: if provided, figure is saved to file
 title: if True, a title is added to the figure (data["title"])
 '''
 
+TIERS_COLORS_MAP = {
+    "0": "#BF2228",
+    "1": "#F37B20",
+    "2": "#F9A83B",
+    "3": "#FFD966",
+    "4": "#89C267",
+    "5": "#89C267"
+}
 
+TIER_COLORS = [
+    "#BF2228",
+    "#F37B20",
+    "#F9A83B",
+    "#FFD966",
+    "#89C267",
+    "#00644F"
+]
+
+AREA_COLORS =[
+    "#DEB9D7",
+    "#7B5FA9",
+    "#455866"
+    
+]
 BLUE_COLORS = [
         "#EBF5FB",
         "#D6EAF8",
@@ -501,7 +524,7 @@ def analyze_by_question(df,question,labels,names):
     return output
 
 
-def plot_tier_distribution(df,question,values,labels,title=None):
+def plot_tier_distribution(df,question,values,labels,title=None,colors=AREA_COLORS):
     
     national=analyze_by_question(df,question,values,labels)
     urban=analyze_by_question(df.loc[df["habitat"]=="urban"],question,values,labels)
@@ -514,12 +537,13 @@ def plot_tier_distribution(df,question,values,labels,title=None):
 
     x = np.arange(len(labels))  # the label locations
     width = 0.25  # the width of the bars
+    delta = 0.02
 
 
     fig,ax = plt.subplots(figsize=(28,18))
-    rects1 = ax.bar(x - width, national_values, width, label='Total Sample')
-    rects2 = ax.bar(x, urban_values, width, label='Urban Households')
-    rects3 = ax.bar(x + width, rural_values, width, label='Rural Households')
+    rects1 = ax.bar(x - width-delta, national_values, width, label='Total Sample',color=colors[0])
+    rects2 = ax.bar(x, urban_values, width, label='Urban Households',color=colors[1])
+    rects3 = ax.bar(x + width+delta, rural_values, width, label='Rural Households',color=colors[2])
 
 
     def autolabel(rects):
