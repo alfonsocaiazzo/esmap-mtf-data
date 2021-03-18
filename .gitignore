@@ -1,3 +1,5 @@
+src/__pycache__/
+mtf-book/rwanda/.ipynb_checkpoints
 */.ipynb_checkpoints/
 */analysis/*.ipynb_checkpoints
 mtf-book/_build
