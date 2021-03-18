@@ -1,0 +1,41 @@
+2 33 Incandescent Light Bulb
+2 34 Fluorescent Tube
+2 35 Compact Fluorescent Light (CFL) Bulb
+2 36 LED Light Bulb
+2 37 Light Bulb, Other/Unknown type
+1 38 Rechargeable torch/flashlight/lantern
+1 39 Radio/CD Players/sound system
+2 40 VCD/DVD
+2 41 Fan
+3 42 Rice cooker
+3 43 Refrigerator
+4 44 Microwave oven
+4 45 Electric Toaster
+4 46 Electric Iron
+0 47 Charcoal Iron
+4 48 Washing machine
+4 49 Electric sewing machine
+0 50 Manual sewing machine
+3 51 Air cooler (External Unit)
+3 52 Air cooler (Central Air)
+5 53 Space Heater
+5 54 Electric water heater
+5 55 Solar based water heater
+4 56 Dishwasher
+2 57 Computer
+2 58 Printer
+3 59 Freezer
+4 60 Electric hot water pot/kettle
+5 61 Electric stove/range
+3 62 Blender
+3 63 Electric food processor
+1 64 Smartphone (internet phone) charger
+1 65 Regular mobile phone charger
+1 66 Electric battery charger
+2 67 Electronic Tablet
+2 68 Satellite dish
+1 69 Radio Receiver
+2 70 Black & White TV
+2 71 Regular Color TV
+2 72 Flat color TV
+4 73 Electric hair dryer
