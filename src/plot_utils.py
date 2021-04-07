@@ -82,6 +82,19 @@ YELLOW_COLORS = [
         "#D4AC0D", 
         "#D4AC0D"]
 
+ELECTRICITY_SOURCES = [
+    "#73C6B6", # grid
+    "#1F618D", # minigrid
+    "#B00C48", # generator
+    "#F1C40F", #SHS
+    "#AE8F14", # solar lantern
+    "#28D328", # rech. battery
+    "#0E6DBC", # pico-hydro
+    "#4B4F53", # none
+    "#A99FA5", # no data
+    "#FD1798" # other
+]
+
 
 COLOR_SCHEME = [
     "#73C6B6",

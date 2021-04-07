@@ -18,6 +18,6 @@
 
 - part: NEPAL
   chapters:
-  - file: dummy
-  - file: dummy
+  - file: nepal/intro
+  - file: nepal/cooking
 
