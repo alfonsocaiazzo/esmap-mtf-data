@@ -1,0 +1,298 @@
+---
+title: "FIES_analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dependencies
+
+Installing [R](https://www.r-project.org/) and [RStudio](www.rstudio.com) is required. 
+
+```{r,results='hide'}
+
+# source command allows to import functions from another R file
+source("/Users/chaix/Desktop/Hedera_desk/FIES/RM.weights/R/RM.w.R")
+source("/Users/chaix/Desktop/Hedera_desk/FIES/RM.weights/R/prob.assign.R")
+
+# Required libraries
+library(psychotools)
+library(RM.weights)
+library(Hmisc)
+```
+
+# Brief overview
+
+## Goal
+We want to use he FIES framework to measure food security. The FIES survey is composed of 8 questions. From this 8 questions asked to each respondent in a certain context (for example in a country), we want to create **a scale of food security** with some threshold established, then to assign to each respondent the probability of being above these food security thresholds. Then we also want to get a proportion of respondent who are food insecure or not.
+
+## The IRT model
+To do so we use a model based on IRT (Item Response Theory), that is a methodology used to analyze responses to survey or test questions. We will use one particular IRT model: the Rash model, that provides a set of statistical tools: assess the suitability of a set of survey items for scale construction and create a scale from the items, and compare performance of a scale in various populations and survey contexts.
+
+## Specificities of the Rash model 
+
+The Rash model doesn't give an absolute scale but a relative one, specific to the given dataset. The items (= questions) and respondents have relative position on the scale of severity, expressed by their respective parameters. That's why an equating step is needed before making any direct comparison among several datasets.
+
+#### Pattern framework
+After having established the order of severity of the eight questions, specific patterns of responses by individual respondents can be considered more or less to "fit" the logic of the model:
+- A respondent who answers yes to a question can be expected to also answer yes all less severe questions.
+- A respondent who answers no to a question is expected to also answer no to all more severe questions.
+The item parameter is estimated based on the overall pattern of responses given by all respondents. A question representing a less severe experience will have a smaller parameter value, whereas a question representing a more severe experience will have a larger parameter value.
+The relative severity of the items is determined based upon the understanding that the more severe an item is, the less likely respondents are to report it.
+Another way to understand this concept is that the proportion of affirmative responses to a given item, in any sample, must be inversely related to the severity of the item.
+
+
+# Code 
+
+The explanation of all the concepts that will be described further come from this [link](https://elearning.fao.org/pluginfile.php/491591/mod_scorm/content/5/story_content/external_files/SDG2.1.2_lesson3.pdf).
+
+The explanation of the RM.weights package on R is available [here](https://cran.r-project.org/web/packages/RM.weights/RM.weights.pdf).
+
+## Dataset
+The dataset we will use comes from the github plateform of RM.weights package. Here is the [link](https://github.com/cran/RM.weights.git).
+This dataset is composed of the result of the survey of Country1. It has been weighted sampling, so we have to take in consideration for the Rash model. 
+
+
+```{r}
+load("/Users/chaix/Desktop/Hedera_desk/FIES/RM.weights/data/data.FAO_country1.rda")
+XX = data.FAO_country1[,1:8]
+head(XX)
+```
+This table is the result of the survey. Each column correspond to a question, each row to a individual or a household. 1 corresponds to 'yes', 0 corresponds to 'no'. 
+
+
+```{r}
+wt = data.FAO_country1$wt
+head(wt)
+```
+From the dataset, we extracted here the  sampling weights corresponding to each individual/household. These weights are stored in the wt variable. 
+sum(wt) = sample size. If wt is unspecified, all sampling units will be weighted in the same way. 
+
+
+## Fit the weighted Rash
+
+Once we got familiar with the dataset, we will then use the function from the **RM.weight** package to apply the Rash model. The first step is to fit thanks to *RM.w* function.
+
+This function computes item and raw score parameter estimates of a Rasch model for binary item responses (0/1 matrix with 1 = Yes). 
+
+### The function and its outputs
+
+#### The function 
+The function can be used as bellow:
+```{r}
+rr = RM.w(XX, wt, write.file = TRUE)
+```
+It outputs this following values:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/RM.w_outputs.png)
+#### The item severity output
+```{r}
+rr$b
+```
+The output 'b' corresponds to the item severity parameters. The bigger the value is, the more severe the item is. There is no absolute interpretation of the numerical values but only relative: the scale is specific to a particular application, here to 'Country 1'.
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/relative_scale_severity.png)
+The *origin '0' of the scale is set as the mean* of the item severity parameters
+
+This gives a continuum of severity as in the following image:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/severity_hunger.png)
+
+
+#### The raw score severity parameter output
+
+The *raw score severity parameter* is basically the number of affirmative responses given to the eight FIES questions - it is an integer number with a value between 0 and 8. It corresponds to the numbers above the line in the following image:
+
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/raw_score.png)
+
+The numbers bellow the line are the *respondent parameters*. These correspond to the output 'a':
+```{r}
+rr$a
+````
+They allow to consider the notion of distance (that is not constant) between each items, which is not the case with the raw score (that only gives an ordinal value).
+
+
+#### The related standards errors outputs
+
+The outputs *se.a* and *se.b* correspond to the standard errors of the severity parameter and the raw score parameter.error: with only eight items we can never be sure that we have exactly measured the latent trait, so we need to quantify the extent of our uncertainty. 
+
+This error is estimating by comparing with the expected model pattern:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/model_pattern.png)
+It is explained in the section 'Pattern model': A respondent who answers yes to a question can be expected to also answer yes all less severe questions, a respondent who answers no to a question is expected to also answer no to all more severe questions. If it does not correspond to this pattern (see the image bellow), the standard errors will be higher.
+
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/pattern_errors.png)
+*The white points corresponds to the errors.*
+
+The more samples with a pattern consistent with the assumptions of the model there are, the more confident we are that our measurement is precise, and this will be reflected in a lower value of the estimated standard error for the respondent parameter.
+
+## Statistical validation
+
+Statistical validation is an analysis that is used to check the quality of the data collected. This involves applying the Rasch Model to the FIES response data and assessing whether the data is conform to the model’s assumptions. If the data do conform to the assumptions, we can conclude
+that the data can be used to calculate a valid measure of food insecurity.
+
+The RM.w function also outputs the tools for this step:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/rash_outputs.png)
+*The scale's discriminatory power¨* = its ability to differentiate among respondents with different
+levels of severity of food insecurity
+
+
+
+#### Infit: principal statistic to look on.
+
+Infit good to identify items that did not perform well in a given population (potential cause, not understood well, translation problems, etc.).
+
+*Infit < 0.7*: this item does not  worsen the measure but doesn't add important information.
+
+*Infit from 0.7-1.3*: adequate fit 
+
+*Infit > 1.3*: unexpected response patterns, the item performs poorly , should be examined  to decide whether to drop it from the scale or not. In this case:
+1- Check the standard error around the infit statistics *se.infit*: a wide standard error indicates a less trustworthy
+result, and therefore provides weaker evidence for dropping the item. 
+Do infit - se.infit, if still above 1.3, think of droping.
+2- The number of affirmative responses to the problematic item. For example, in a very food secure
+country, if you find a high infit for one of the most severe items in the scale, it has probably been
+answered "yes" by only a small number of respondents. In this case: keep the item as this will not significantly alter the estimates of food insecurity prevalence rates. 
+
+```{r}
+print(rr$infit)
+print(rr$se.infit)
+````
+
+
+
+
+#### Outfit
+
+*Outfit > 2*: too high.
+Outfit is similar to infit, but is sensitive to the presence of even just a few cases with highly unexpected response patterns, and are therefore useful to flag the presence of outliers: then allows to drop unusual cases and fit again.
+
+```{r}
+rr$outfit
+````
+
+#### Residual correlation matrix
+
+*correlation(two items) > abs(0.4)*: too high. 
+Reason: overlap of meaning, redundant question.
+```{r}
+rr$res.corr
+````
+
+#### Rasch reliability
+
+Rasch reliability provides information about the discriminatory power of the overall scale.
+
+*reliability > 0.7 *: acceptable for 8-items scale, 0.6 for 7-items scale.
+```{r}
+rr$reliab
+````
+
+
+#### Missing values 
+
+If an item has more than 10% missing responses, this may suggest that it was difficult for respondents to answer and the decision may be made to drop it from the scale. 
+
+If cases with missing responses are concentrated in one sub-population (language, culture, or gender), attention should be given to translation, cultural adaptation, or gender matching of respondent and interviewer for future surveys.
+
+
+#### Cases used for statistical validation:
+
+1- Only complete reponses
+
+2 - A proper number of non-extreme cases (= Raw score = 0 or 8)
+A sufficient number of complete, non-extreme cases is necessary in order to have confidence in the statistical validation of FIES data, see the table bellow:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/non_extr_cases.png)
+N.B: While cases with extreme raw scores cannot be used for statistical
+validation, they must be included in the calculation of food insecurity prevalence estimates!
+
+
+## Calculate food insecurity prevalence rate and probabilities assignement.  
+
+In the previous section, we learned that respondent and item parameters
+can be calculated using the RM.weights software.
+
+Now we will learn how to use this output to calculate estimates of the prevalence of food
+insecurity that can be compared across countries (or across any application of the FIES).
+
+#### Meaning of prevalence rate
+
+The percentage of individuals in the total population who are affected by food insecurity at different levels/thresholds of severity (here moderate + severe). 
+One set two thresholds between Food/Mild food secure and Moderate food insecure, then between Moderate food insecure and Severe food insecure
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/prevalence_results.png)
+
+#### The use of the excel template
+
+In order to calculate the prevalence rate, one can use the Excel Template, called *'EPE_Example_Final'*. We will explain bellow the notions used in this template.
+Everything is done 'automatically' in this excel file, the outputs of the RM.w function just have to be added and the results will appear straight away: 
+
+Some information of this excel template are explained in the screenshot bellow: ![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/template1.png)
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/template2.png)
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/template3.png)
+
+
+We will then explain the different notions used in this template. All the steps done in this template **can be also computed thanks to the RM.weights functions on R**, that we will specify as well. 
+
+
+#### Explanation of the excel file and the notion used. 
+
+The steps of the excel (in the sections *CALCULATIONS*) are:
+
+1) **Equate**: to compute th prevalence rate, reference common thresholds must be calculated. To do so, a process must have to be done: equating the mean and the std of the 8 items parameters to those on the reference global scale.
+2) **Compare** the adjusted parameters of the two scales (thanks to *the absolute difference*). 
+3) **Plot** two scale's item parameters, **Compute** *the absolute difference* ans ¨*the correlation value*. From this result, one have to determine manually 'common' and 'unique' items.
+4) After having manually deleted potential 'unique' items the 3 previous steps have to be done againe. Repeat this linear alignment until at least 5 items are considered 'common' and not 'unique'.
+
+
+The details of these steps are explained bellow:
+
+
+##### Equating: calibrating to a common metric 
+Application of the Rasch model on a single country dataset produces a scale that is, to some extent, arbitrary to that country. Before comparing measures obtained in two different  countries or populations, it will be necessary to calibrate the two scales. To do so *the FIE global standard scale* is used for producing estimates of food insecurity that are valid, reliable and comparable across contexts and to give  provisional baseline estimates. Thanks to this global standard scale, one will be able to produce internationally comparable results.
+
+We will then align our thresholds to the global standard thresholds: **ATELESS** and **WHLDAY**: 
+
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/globasl_standard_thrsh.png)
+*This is the Global Standard scale with its two thresholds*
+
+In the RM.weights package, a function allows to do the equate step:
+```{r}
+ee=equating.fun(rr, tol = 0.35, spec.com1=c(1:8), spec.com2=c(1:8))
+```
+
+The input of the function are described bellow: 
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/equating_arg_1.png)
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/equating_arg_2.png)
+
+The outputs are:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/equating_output.png)
+The main output is the **prevalence rate** in the country of interest calculated at specified thresholds along the latent trait.
+
+
+#### Probabilistic assignement:
+
+One can also find in the excel the probabilistic assignment of respondents to food insecurity classes. That means assigning each respondent a probability of falling into a certain class, i.e. that their true severity level is above or below the threshold, given their raw score.
+One example:
+The outputs are:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/prob_raw.png)
+The probability of being moderately food insecure is here to 0.99 if the raw score of the respondent is to 7.
+
+It is also possible to calculate it thanks to the RM.weights package:
+```{r}
+prob.assign(rr, rwthres = c(5,8), sthres = NULL)
+````
+
+*rwthres = c(5,8)* corresponds to Raw score thresholds. If this argument is specified, corresponding thresholds on the latent trait (thres) are provided as output. Here, the 5th item is the first threshold and the 8th is the second one.
+The outputs are:
+![alt text here](/Users/chaix/Desktop/Hedera_desk/FIES/images/prob_output.png)
+
+
+#### Important to know
+
+The results produced by the FIES Excel Template are a prevalence of food insecure individuals and not households. Thus, with households, the template doesn't work, so it is good using the RM.weights package.
+If you have household referenced data, you must:
+- Estimate the item parameters using the original, household referenced data.
+- Produce the distribution of individuals across raw scores by multiplying the household sampling weights by the household size.
+These procedures can be carried out within the RM.weights application, but users with household level data must remember to carry out this additional calculation, to ensure that their resulting prevalence rates refer to individuals in the national population.
+
+
+
+

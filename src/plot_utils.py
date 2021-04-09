@@ -40,7 +40,7 @@ AREA_COLORS =[
     "#DEB9D7",
     "#7B5FA9",
     "#455866"
-    
+
 ]
 BLUE_COLORS = [
         "#EBF5FB",
