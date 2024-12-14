@@ -1,23 +1,16 @@
-# Table of content
-# Learn more at https://jupyterbook.org/customize/toc.html
-#
-- file: intro
-
-- part: THE MULTI-TIER FRAMEWORK
+format: jb-book
+root: intro
+parts:
+- caption: THE MULTI-TIER FRAMEWORK
   chapters:
   - file: about/mtf
-
-- part: RWANDA
+- caption: RWANDA
   chapters:
   - file: rwanda/intro
   - file: rwanda/info_electricity
   - file: rwanda/mtf_electricity
   - file: rwanda/cooking_solutions
-  
-
-
-- part: NEPAL
+- caption: NEPAL
   chapters:
   - file: nepal/intro
   - file: nepal/cooking
-
